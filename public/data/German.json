@@ -1,0 +1,476 @@
+[
+    {
+        "text": "satt",
+        "translations": [
+            "full"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/7e18ad0850283100fd539648eb864459",
+        "isNew": false
+    },
+    {
+        "text": "Brot",
+        "translations": [
+            "bread",
+            "bread's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/a926032f93e37023bf0f612ab4d53eb4",
+        "isNew": false
+    },
+    {
+        "text": "das",
+        "translations": [
+            "this",
+            "the",
+            "that",
+            "these",
+            "those",
+            "about that",
+            "that's",
+            "so",
+            "th",
+            "who's",
+            "who",
+            "which",
+            "s'",
+            "that’s"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/d231978db590d9255d69823f1be800ce",
+        "isNew": false
+    },
+    {
+        "text": "Schnitzel",
+        "translations": [
+            "schnitzel",
+            "schnitzels"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/afa701b3ec4ccfa04924756dad635634",
+        "isNew": false
+    },
+    {
+        "text": "Käse",
+        "translations": [
+            "cheese"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/886028299a96487a4d6570286d6d2533",
+        "isNew": false
+    },
+    {
+        "text": "Salat",
+        "translations": [
+            "salad",
+            "lettuce",
+            "salad's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/1c4158f30fad92cb4ab800dd69ef746e",
+        "isNew": false
+    },
+    {
+        "text": "der",
+        "translations": [
+            "this",
+            "to the",
+            "of the",
+            "the",
+            "that",
+            "one's",
+            "those",
+            "in the",
+            "that's",
+            "whom",
+            "th",
+            "who's",
+            "who",
+            "which",
+            "of",
+            "my",
+            "s'",
+            "people's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/332f19337763168d133cd411dca9c573",
+        "isNew": false
+    },
+    {
+        "text": "frisch",
+        "translations": [
+            "fresh",
+            "freshly",
+            "newly",
+            "tangy"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/ff8ea459515966c9eb927716028305e3",
+        "isNew": false
+    },
+    {
+        "text": "Pizza",
+        "translations": [
+            "pizza"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/8947c14f663138640c5850a2daf1b26e",
+        "isNew": false
+    },
+    {
+        "text": "Wurst",
+        "translations": [
+            "sausage"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/106ffd20618e6050071ed7219875a4e8",
+        "isNew": false
+    },
+    {
+        "text": "lecker",
+        "translations": [
+            "delicious",
+            "tasty",
+            "yum"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/ee1550f33269bba8b37d5342e0476d9d",
+        "isNew": false
+    },
+    {
+        "text": "die",
+        "translations": [
+            "this",
+            "the",
+            "that",
+            "these",
+            "those",
+            "that's",
+            "whom",
+            "th",
+            "who",
+            "which",
+            "my",
+            "who's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/b1071d74abefe1853893082391064519",
+        "isNew": false
+    },
+    {
+        "text": "das Restaurant",
+        "translations": [
+            "the restaurant"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/a87c6d06f65fbf285e8bd8439f707631",
+        "isNew": false
+    },
+    {
+        "text": "billig",
+        "translations": [
+            "cheap",
+            "inexpensive"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/3f9cce745f9680fcab17b0fcca901311",
+        "isNew": false
+    },
+    {
+        "text": "hungrig",
+        "translations": [
+            "hungry"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/76c8d7ccda5d9bee91d9379bad3a7093",
+        "isNew": false
+    },
+    {
+        "text": "gut",
+        "translations": [
+            "well",
+            "fine",
+            "OK",
+            "good"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/2fca47d364fdafe692b40af08c1e0d72",
+        "isNew": false
+    },
+    {
+        "text": "ist",
+        "translations": [
+            "is",
+            "am",
+            "has been",
+            "'s",
+            "is feeling",
+            "did",
+            "feels",
+            "has",
+            "are",
+            "there is",
+            "was",
+            "s'"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/442da0ebed02a2e3961baf5d5bd44dc7",
+        "isNew": false
+    },
+    {
+        "text": "nett",
+        "translations": [
+            "kind",
+            "nice",
+            "pleasant"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/305f1ede7c83aa949e57537fcd037399",
+        "isNew": false
+    },
+    {
+        "text": "lustig",
+        "translations": [
+            "funny",
+            "cheerful"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/64967fa6411f0ae8ad31ba525c140427",
+        "isNew": false
+    },
+    {
+        "text": "Tochter",
+        "translations": [
+            "daughter"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/d808acee20d5f1febe2f87bda8a1ea60",
+        "isNew": false
+    },
+    {
+        "text": "Sohn",
+        "translations": [
+            "son",
+            "son's",
+            "junior's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/ca0f61786c2f4f26bbe6bd39d3552102",
+        "isNew": false
+    },
+    {
+        "text": "Papa",
+        "translations": [
+            "to Dad",
+            "dad",
+            "Dad",
+            "dad's",
+            "papa's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/1a8013beec4ff120129be16e89b4fcc3",
+        "isNew": false
+    },
+    {
+        "text": "Bruder",
+        "translations": [
+            "brother",
+            "broher's",
+            "brother's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/a82599b047cfd7aa6353250261c06592",
+        "isNew": false
+    },
+    {
+        "text": "das ist",
+        "translations": [
+            "that's",
+            "it's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/e19355863e6d6e60446974fe442422c4",
+        "isNew": false
+    },
+    {
+        "text": "Schwester",
+        "translations": [
+            "sister",
+            "sister's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/8db9bb98e475f67bb85c3d1e15acab96",
+        "isNew": false
+    },
+    {
+        "text": "Mama",
+        "translations": [
+            "mom"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/6a0c27baded192e9267fd1761d12d920",
+        "isNew": false
+    },
+    {
+        "text": "mein",
+        "translations": [
+            "my"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/f8d009496a7cf73d152f24706a414282",
+        "isNew": false
+    },
+    {
+        "text": "Berlin",
+        "translations": [
+            "Berlin"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/52653e8ab9af8aa52276caa01c3fc8a4",
+        "isNew": false
+    },
+    {
+        "text": "freut mich",
+        "translations": [
+            "Nice to meet you"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/bc425b5860656a6711ebb6e5596c5815",
+        "isNew": false
+    },
+    {
+        "text": "London",
+        "translations": [
+            "London"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/7ba9c365bfc51692f412ebdda6376f81",
+        "isNew": false
+    },
+    {
+        "text": "und du",
+        "translations": [
+            "and you"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/01abd4b2e5c5cfcd0c5ddbdf9107168b",
+        "isNew": false
+    },
+    {
+        "text": "Toronto",
+        "translations": [
+            "Toronto"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/48c5a21b57aeabca1897922dc987a287",
+        "isNew": false
+    },
+    {
+        "text": "Paris",
+        "translations": [
+            "Paris"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/4e8b46e23db9337faeeeed1421e87467",
+        "isNew": false
+    },
+    {
+        "text": "ich komme aus",
+        "translations": [
+            "I come from",
+            "I am from",
+            "I originate from"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/96d890495c278fcbb6204eff7729a92c",
+        "isNew": false
+    },
+    {
+        "text": "Tokio",
+        "translations": [
+            "tokyo"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/2d9aa61754ec41b3ea8f9de4d56cdcd1",
+        "isNew": false
+    },
+    {
+        "text": "ich bin",
+        "translations": [
+            "am"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/8eb99cc3c3ee10b6c5531e48a0256259",
+        "isNew": false
+    },
+    {
+        "text": "tschüss",
+        "translations": [
+            "bye"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/a94f9bb0813ae9f9cd9403aecb5a606c",
+        "isNew": false
+    },
+    {
+        "text": "und",
+        "translations": [
+            "and"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/4262ab22365be9e792c3875fd56afb89",
+        "isNew": false
+    },
+    {
+        "text": "Kekse",
+        "translations": [
+            "cookies"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/f23a2921893645f38c569c8e7e0a8127",
+        "isNew": false
+    },
+    {
+        "text": "Wasser",
+        "translations": [
+            "water",
+            "water's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/8539616455e053e9723fe6ce9ac20d20",
+        "isNew": false
+    },
+    {
+        "text": "danke",
+        "translations": [
+            "thank you"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/c433c20c35ab69bddd111f882f5e14e5",
+        "isNew": false
+    },
+    {
+        "text": "mit",
+        "translations": [
+            "with"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/f1ddf714b773f416d8df55e5840a9e74",
+        "isNew": false
+    },
+    {
+        "text": "Milch",
+        "translations": [
+            "milk"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/cc9ffde0c04e5896afce1486856df1e9",
+        "isNew": false
+    },
+    {
+        "text": "Zucker",
+        "translations": [
+            "sugar"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/2428ba27a9975de15a39c27f9e112fd3",
+        "isNew": false
+    },
+    {
+        "text": "hallo",
+        "translations": [
+            "hello"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/000a6ad40faaab26f70b5fb4cd47d80e",
+        "isNew": false
+    },
+    {
+        "text": "oder",
+        "translations": [
+            "or"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/6eb4e873936d09a99d4cf5c240260643",
+        "isNew": false
+    },
+    {
+        "text": "bitte",
+        "translations": [
+            "please"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/430ee81a7bba2875997c271135c0b79b",
+        "isNew": false
+    },
+    {
+        "text": "Kaffee",
+        "translations": [
+            "coffee"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/aeca44bd6e1c41e97f50658b87dfc1b2",
+        "isNew": false
+    },
+    {
+        "text": "Tee",
+        "translations": [
+            "tea",
+            "tea's"
+        ],
+        "audioURL": "https://d1vq87e9lcf771.cloudfront.net/beade/5fa852b11d5485cf4a7d72718f5fa767",
+        "isNew": false
+    }
+]
