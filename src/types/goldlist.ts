@@ -18,7 +18,8 @@ export interface WordItem {
   lastReviewedAt?: number;
   nextEligibleAt: number; // Distillation cooldown target timestamp
   reviewCount: number;
-  notes?: string;
+  notes?: string; // Custom sentence / mnemonic note
+  isStarred?: boolean; // Star / difficulty marker
 }
 
 export interface GoldListPage {
@@ -40,7 +41,8 @@ export interface AppSettings {
   autoPlayAudio: boolean;
   targetWeeks: number; // Default 4
   dailyPagesGoal: number; // Default 2
-  notebookTheme: 'vintage' | 'clean' | 'slate';
+  notebookTheme: 'vintage' | 'midnight';
+  lastVisitedPageId?: number; // Bookmark
 }
 
 export interface AppStats {
@@ -52,4 +54,5 @@ export interface AppStats {
   masteredCount: number;
   pagesCount: number;
   completedDistillations: number;
+  starredCount?: number;
 }

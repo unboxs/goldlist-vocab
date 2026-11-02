@@ -1,22 +1,25 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Volume2, Filter, ExternalLink, Sparkles, CheckCircle2, BookOpen } from 'lucide-react';
+import { Search, Volume2, Filter, ExternalLink, Sparkles, CheckCircle2, BookOpen, Star, FileText } from 'lucide-react';
 import { WordItem, DistillationStage } from '../types/goldlist';
 import { sound } from '../services/sound';
 
 interface WordVaultProps {
   words: WordItem[];
   onGoToPage: (pageId: number) => void;
+  onToggleStar?: (wordId: string) => void;
 }
 
-export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
+export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage, onToggleStar }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [stageFilter, setStageFilter] = useState<DistillationStage | 'all'>('all');
+  const [stageFilter, setStageFilter] = useState<DistillationStage | 'all' | 'starred'>('all');
   const [visibleCount, setVisibleCount] = useState(50);
 
   // Filtered list
   const filteredWords = useMemo(() => {
     let result = words;
-    if (stageFilter !== 'all') {
+    if (stageFilter === 'starred') {
+      result = result.filter((w) => w.isStarred);
+    } else if (stageFilter !== 'all') {
       result = result.filter((w) => w.stage === stageFilter);
     }
     if (searchTerm.trim()) {
@@ -24,7 +27,8 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
       result = result.filter(
         (w) =>
           w.text.toLowerCase().includes(q) ||
-          w.translations.some((t) => t.toLowerCase().includes(q))
+          w.translations.some((t) => t.toLowerCase().includes(q)) ||
+          (w.notes && w.notes.toLowerCase().includes(q))
       );
     }
     return result;
@@ -89,6 +93,7 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
           <div className="flex items-center space-x-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 text-xs">
             {[
               { id: 'all', label: '全部' },
+              { id: 'starred', label: '⭐ 重点生词' },
               { id: 'mastered', label: '💎 永久金库' },
               { id: 'headlist', label: '📜 原始' },
               { id: 'd1', label: '🥉 铜级' },
@@ -98,7 +103,7 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
               <button
                 key={f.id}
                 onClick={() => {
-                  setStageFilter(f.id as DistillationStage | 'all');
+                  setStageFilter(f.id as DistillationStage | 'all' | 'starred');
                   setVisibleCount(50);
                 }}
                 className={`px-3 py-2 rounded-xl whitespace-nowrap transition-all ${
@@ -138,10 +143,32 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
+
+                  {onToggleStar && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleStar(word.id);
+                      }}
+                      className="p-1 hover:bg-amber-100 rounded-full transition-colors"
+                      title={word.isStarred ? '取消重点生词' : '标记为重点生词'}
+                    >
+                      <Star
+                        className={`w-4 h-4 ${
+                          word.isStarred ? 'fill-amber-400 text-amber-500' : 'text-stone-300 hover:text-amber-500'
+                        }`}
+                      />
+                    </button>
+                  )}
                 </div>
                 <div className="text-xs sm:text-sm text-stone-600 line-clamp-2 leading-relaxed">
                   {word.translations.join('； ')}
                 </div>
+                {word.notes && (
+                  <div className="text-[11px] text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/80 font-serif italic truncate mt-1">
+                    📝 {word.notes}
+                  </div>
+                )}
               </div>
 
               <div className="flex-shrink-0">

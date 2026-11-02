@@ -38,12 +38,15 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
 }) => {
   const [selectedPageId, setSelectedPageId] = useState<number>(initialPageId);
   const [mode, setMode] = useState<PracticeMode>('spelling');
-  const [filterScope, setFilterScope] = useState<'page' | 'pipeline' | 'all'>('page');
+  const [filterScope, setFilterScope] = useState<'page' | 'pipeline' | 'starred' | 'all'>('page');
 
   // Words pool for practice
   const practiceWords = React.useMemo(() => {
     if (filterScope === 'page') {
       return words.filter((w) => w.pageId === selectedPageId);
+    } else if (filterScope === 'starred') {
+      const starred = words.filter((w) => w.isStarred);
+      return starred.length > 0 ? starred : words.filter((w) => w.pageId === selectedPageId);
     } else if (filterScope === 'pipeline') {
       const pipelineWords = words.filter((w) => ['headlist', 'd1', 'd2', 'd3'].includes(w.stage));
       return pipelineWords.slice(0, 30);
@@ -266,6 +269,19 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
               }`}
             >
               待蒸馏攻坚池
+            </button>
+            <button
+              onClick={() => {
+                setFilterScope('starred');
+                handleRestart();
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                filterScope === 'starred'
+                  ? 'bg-amber-700 text-white'
+                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+              }`}
+            >
+              ⭐ 重点生词
             </button>
           </div>
         </div>

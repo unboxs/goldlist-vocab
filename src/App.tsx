@@ -4,6 +4,7 @@ import { TodayDashboard } from './components/TodayDashboard';
 import { NotebookView } from './components/NotebookView';
 import { WordVault } from './components/WordVault';
 import { PracticeArena } from './components/PracticeArena';
+import { ContinuousPlayer } from './components/ContinuousPlayer';
 import { DistillSession } from './components/DistillSession';
 import { GoldListGuideModal } from './components/GoldListGuideModal';
 import { SettingsModal } from './components/SettingsModal';
@@ -38,6 +39,11 @@ export const App: React.FC = () => {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  // New states: Continuous Player & Theme
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
+  const [playerPageId, setPlayerPageId] = useState<number>(1);
+  const [theme, setTheme] = useState<'vintage' | 'midnight'>('vintage');
+
   // Load database
   const refreshData = async () => {
     try {
@@ -50,6 +56,12 @@ export const App: React.FC = () => {
       setPages(allPages);
       setSettings(appSettings);
       setStats(appStats);
+      if (appSettings.lastVisitedPageId) {
+        setSelectedPageId(appSettings.lastVisitedPageId);
+      }
+      if (appSettings.notebookTheme) {
+        setTheme(appSettings.notebookTheme);
+      }
     } catch (err) {
       console.error('Failed to refresh data:', err);
     }
@@ -72,14 +84,42 @@ export const App: React.FC = () => {
     initApp();
   }, []);
 
+  const handleSelectPage = (pid: number) => {
+    setSelectedPageId(pid);
+    db.setLastVisitedPage(pid);
+  };
+
   const handleStartDistillation = (pageId: number) => {
     setDistillPageId(pageId);
     setIsDistilling(true);
   };
 
   const handleStartPractice = (pageId: number) => {
-    setSelectedPageId(pageId);
+    handleSelectPage(pageId);
     setCurrentTab('practice');
+  };
+
+  const handleLaunchPlayer = (pageId: number) => {
+    setPlayerPageId(pageId);
+    setIsPlayerOpen(true);
+  };
+
+  const handleToggleStar = async (wordId: string) => {
+    await db.toggleWordStar(wordId);
+    await refreshData();
+  };
+
+  const handleUpdateNotes = async (wordId: string, notes: string) => {
+    await db.updateWordNotes(wordId, notes);
+    await refreshData();
+  };
+
+  const handleToggleTheme = async () => {
+    const nextTheme: 'vintage' | 'midnight' = theme === 'vintage' ? 'midnight' : 'vintage';
+    setTheme(nextTheme);
+    const newSettings: AppSettings = { ...settings, notebookTheme: nextTheme };
+    setSettings(newSettings);
+    await db.updateSettings(newSettings);
   };
 
   const handleFinishDistillation = async () => {
@@ -131,7 +171,9 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f2eb] flex flex-col">
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
+      theme === 'midnight' ? 'bg-[#151210] text-stone-100' : 'bg-[#f5f2eb] text-stone-900'
+    }`}>
       {/* Top Navigation */}
       <Navbar
         currentTab={currentTab}
@@ -140,6 +182,9 @@ export const App: React.FC = () => {
         onOpenSettings={() => setIsSettingsOpen(true)}
         masteredCount={stats.masteredCount}
         totalWords={stats.totalWords}
+        starredCount={stats.starredCount}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Tab Content */}
@@ -152,8 +197,9 @@ export const App: React.FC = () => {
             cooldownDays={settings.cooldownDays}
             targetWeeks={settings.targetWeeks}
             dailyPagesGoal={settings.dailyPagesGoal}
+            lastVisitedPageId={settings.lastVisitedPageId || selectedPageId}
             onOpenNotebookPage={(pid) => {
-              setSelectedPageId(pid);
+              handleSelectPage(pid);
               setCurrentTab('notebook');
             }}
             onStartDistillation={handleStartDistillation}
@@ -168,9 +214,12 @@ export const App: React.FC = () => {
             pages={pages}
             words={words}
             cooldownDays={settings.cooldownDays}
-            onSelectPage={setSelectedPageId}
+            onSelectPage={handleSelectPage}
             onStartDistillation={handleStartDistillation}
             onStartPractice={handleStartPractice}
+            onToggleStar={handleToggleStar}
+            onUpdateNotes={handleUpdateNotes}
+            onLaunchPlayer={handleLaunchPlayer}
             onOpenGuide={() => setIsGuideOpen(true)}
           />
         )}
@@ -181,7 +230,7 @@ export const App: React.FC = () => {
             pages={pages}
             initialPageId={selectedPageId}
             onGoToPage={(pid) => {
-              setSelectedPageId(pid);
+              handleSelectPage(pid);
               setCurrentTab('notebook');
             }}
           />
@@ -190,10 +239,24 @@ export const App: React.FC = () => {
         {currentTab === 'vault' && (
           <WordVault
             words={words}
-            onGoToPage={handleGoToPageFromVault}
+            onGoToPage={(pid) => {
+              handleSelectPage(pid);
+              setCurrentTab('notebook');
+            }}
+            onToggleStar={handleToggleStar}
           />
         )}
       </main>
+
+      {/* Floating Continuous Audio Player */}
+      {isPlayerOpen && (
+        <ContinuousPlayer
+          words={words.filter((w) => w.pageId === playerPageId)}
+          pageTitle={`第 ${playerPageId} 页`}
+          isOpen={isPlayerOpen}
+          onClose={() => setIsPlayerOpen(false)}
+        />
+      )}
 
       {/* Distillation Flashcard Session Modal */}
       {isDistilling && (

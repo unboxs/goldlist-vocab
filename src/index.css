@@ -50,3 +50,25 @@
   background: rgba(180, 160, 130, 0.7);
 }
 
+/* Print styling for A4 Goldlist Worksheet */
+@media print {
+  body {
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+  header, nav, .no-print, button {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-page {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+}
+
+

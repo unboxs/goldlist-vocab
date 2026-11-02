@@ -46,6 +46,33 @@ class SoundService {
     }
   }
 
+  // Speak Chinese translation
+  public speakChinese(chineseText: string): Promise<void> {
+    return new Promise((resolve) => {
+      if (!('speechSynthesis' in window)) {
+        resolve();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(chineseText);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 1.0;
+      utterance.onend = () => resolve();
+      utterance.onerror = () => resolve();
+      window.speechSynthesis.speak(utterance);
+    });
+  }
+
+  public stopAllAudio(): void {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+
   // Pleasant positive chime when mastering a word
   public playMasterChime(): void {
     try {

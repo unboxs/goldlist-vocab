@@ -9,7 +9,12 @@ import {
   Play, 
   HelpCircle,
   Search,
-  Filter
+  Filter,
+  Printer,
+  Star,
+  FileText,
+  Headphones,
+  Bookmark
 } from 'lucide-react';
 import { GoldListPage, WordItem } from '../types/goldlist';
 import { sound } from '../services/sound';
@@ -22,6 +27,9 @@ interface NotebookViewProps {
   onSelectPage: (pageId: number) => void;
   onStartDistillation: (pageId: number) => void;
   onStartPractice?: (pageId: number) => void;
+  onToggleStar?: (wordId: string) => void;
+  onUpdateNotes?: (wordId: string, notes: string) => void;
+  onLaunchPlayer?: (pageId: number) => void;
   onOpenGuide: () => void;
 }
 
@@ -33,10 +41,15 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
   onSelectPage,
   onStartDistillation,
   onStartPractice,
+  onToggleStar,
+  onUpdateNotes,
+  onLaunchPlayer,
   onOpenGuide,
 }) => {
   const [filterMode, setFilterMode] = useState<'all' | 'needs-distill' | 'mastered'>('all');
   const [pageSearch, setPageSearch] = useState('');
+  const [editingNotesWordId, setEditingNotesWordId] = useState<string | null>(null);
+  const [tempNote, setTempNote] = useState('');
   const now = Date.now();
 
   const currentPage = pages.find((p) => p.id === currentPageId) || pages[0];
@@ -126,6 +139,28 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
               <span>潜意识沉淀中（还剩 {daysLeft} 天）</span>
             </span>
           )}
+
+          {/* Continuous Player button */}
+          {onLaunchPlayer && (
+            <button
+              onClick={() => onLaunchPlayer(currentPageId)}
+              className="py-2 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs flex items-center space-x-1.5 transition-all shadow-sm"
+              title="连续自动朗读播放本页 20 词，适合闭目磨耳朵或边听边手写"
+            >
+              <Headphones className="w-3.5 h-3.5 text-amber-700" />
+              <span>随身听连播</span>
+            </button>
+          )}
+
+          {/* Print A4 worksheet button */}
+          <button
+            onClick={() => window.print()}
+            className="py-2 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-700 text-xs flex items-center space-x-1 transition-all shadow-sm"
+            title="打印或导出本页为标准 A4 四象限纸模，用于真实纸笔手抄"
+          >
+            <Printer className="w-3.5 h-3.5 text-stone-600" />
+            <span className="hidden sm:inline">打印 A4 手账</span>
+          </button>
 
           {/* Practice button */}
           {onStartPractice && (
@@ -246,7 +281,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
                       <span className="font-mono text-xs font-semibold text-stone-400 w-5 flex-shrink-0 pt-1">
                         {index + 1}.
                       </span>
-                      <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex items-center space-x-2">
                           <span className="font-serif font-bold text-stone-900 text-base sm:text-lg tracking-normal">
                             {word.text}
@@ -258,10 +293,85 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
                           >
                             <Volume2 className="w-4 h-4" />
                           </button>
+
+                          {/* Star toggle */}
+                          {onToggleStar && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleStar(word.id);
+                              }}
+                              className="p-1 hover:bg-amber-100 rounded-full transition-colors"
+                              title={word.isStarred ? '取消重点生词标记' : '标记为重点生词 (Star)'}
+                            >
+                              <Star
+                                className={`w-3.5 h-3.5 ${
+                                  word.isStarred ? 'fill-amber-400 text-amber-500' : 'text-stone-300 hover:text-amber-500'
+                                }`}
+                              />
+                            </button>
+                          )}
+
+                          {/* Custom note button */}
+                          {onUpdateNotes && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingNotesWordId(editingNotesWordId === word.id ? null : word.id);
+                                setTempNote(word.notes || '');
+                              }}
+                              className="p-1 hover:bg-amber-100 rounded-full transition-colors"
+                              title="添加或修改我的私家助记笔记/例句"
+                            >
+                              <FileText
+                                className={`w-3.5 h-3.5 ${
+                                  word.notes ? 'text-amber-700 fill-amber-100' : 'text-stone-300 hover:text-stone-600'
+                                }`}
+                              />
+                            </button>
+                          )}
                         </div>
+
                         <div className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
                           {word.translations.join('； ')}
                         </div>
+
+                        {/* Existing note view */}
+                        {word.notes && editingNotesWordId !== word.id && (
+                          <div className="text-xs text-amber-950 bg-amber-50/90 px-2.5 py-1 rounded-lg border border-amber-200/90 font-serif italic flex items-center justify-between">
+                            <span>📝 <strong>助记/例句:</strong> {word.notes}</span>
+                          </div>
+                        )}
+
+                        {/* Editing note form */}
+                        {editingNotesWordId === word.id && (
+                          <div className="mt-2 p-2.5 bg-white rounded-xl border-2 border-amber-400 shadow-md space-y-2">
+                            <textarea
+                              rows={2}
+                              value={tempNote}
+                              onChange={(e) => setTempNote(e.target.value)}
+                              placeholder="写下属于你的例句短语或助记口诀..."
+                              className="w-full text-xs p-2 border border-stone-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-500/20 text-stone-800"
+                            />
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={() => setEditingNotesWordId(null)}
+                                className="px-2.5 py-1 text-xs text-stone-500 hover:bg-stone-100 rounded-lg"
+                              >
+                                取消
+                              </button>
+                              <button
+                                onClick={() => {
+                                  onUpdateNotes?.(word.id, tempNote.trim());
+                                  setEditingNotesWordId(null);
+                                }}
+                                className="px-3 py-1 bg-amber-700 text-white text-xs font-medium rounded-lg hover:bg-amber-800"
+                              >
+                                保存笔记
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 

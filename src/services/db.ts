@@ -213,6 +213,34 @@ class DBService {
     }
   }
 
+  // Toggle word starred
+  public async toggleWordStar(wordId: string): Promise<boolean> {
+    await this.loadCache();
+    const word = this.wordsCache?.find((w) => w.id === wordId);
+    if (!word) return false;
+    word.isStarred = !word.isStarred;
+    await set(STORAGE_KEYS.WORDS, this.wordsCache);
+    return word.isStarred;
+  }
+
+  // Update notes for a word
+  public async updateWordNotes(wordId: string, notes: string): Promise<void> {
+    await this.loadCache();
+    const word = this.wordsCache?.find((w) => w.id === wordId);
+    if (!word) return;
+    word.notes = notes;
+    await set(STORAGE_KEYS.WORDS, this.wordsCache);
+  }
+
+  // Save last visited page bookmark
+  public async setLastVisitedPage(pageId: number): Promise<void> {
+    await this.loadCache();
+    if (this.settingsCache) {
+      this.settingsCache.lastVisitedPageId = pageId;
+      await set(STORAGE_KEYS.SETTINGS, this.settingsCache);
+    }
+  }
+
   // Statistics
   public async getStats(): Promise<AppStats> {
     await this.loadCache();
@@ -224,6 +252,7 @@ class DBService {
     let d2Count = 0;
     let d3Count = 0;
     let masteredCount = 0;
+    let starredCount = 0;
 
     for (const w of words) {
       if (w.stage === 'headlist') headlistCount++;
@@ -231,6 +260,8 @@ class DBService {
       else if (w.stage === 'd2') d2Count++;
       else if (w.stage === 'd3') d3Count++;
       else if (w.stage === 'mastered') masteredCount++;
+
+      if (w.isStarred) starredCount++;
     }
 
     const completedDistillations = words.reduce((acc, w) => acc + w.reviewCount, 0);
@@ -244,6 +275,7 @@ class DBService {
       masteredCount,
       pagesCount: pages.length,
       completedDistillations,
+      starredCount,
     };
   }
 
