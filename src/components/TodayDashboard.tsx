@@ -9,7 +9,8 @@ import {
   Calendar,
   AlertCircle,
   HelpCircle,
-  Play
+  Play,
+  PenTool
 } from 'lucide-react';
 import { AppStats, GoldListPage, WordItem } from '../types/goldlist';
 
@@ -22,6 +23,7 @@ interface TodayDashboardProps {
   dailyPagesGoal: number;
   onOpenNotebookPage: (pageId: number) => void;
   onStartDistillation: (pageId: number) => void;
+  onOpenPractice?: (pageId: number) => void;
   onOpenGuide: () => void;
 }
 
@@ -34,6 +36,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   dailyPagesGoal,
   onOpenNotebookPage,
   onStartDistillation,
+  onOpenPractice,
   onOpenGuide,
 }) => {
   const now = Date.now();
@@ -342,20 +345,32 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                // Find first unreviewed page
-                const firstFresh = pages.find(p => {
-                  const pw = words.filter(w => w.pageId === p.id);
-                  return pw.every(w => w.reviewCount === 0);
-                });
-                onOpenNotebookPage(firstFresh ? firstFresh.id : 1);
-              }}
-              className="w-full py-2.5 px-4 rounded-xl bg-stone-900 hover:bg-black text-white font-medium text-xs shadow flex items-center justify-center space-x-2 transition-all"
-            >
-              <BookOpen className="w-4 h-4 text-amber-400" />
-              <span>翻开黄金手账本</span>
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              <button
+                onClick={() => {
+                  // Find first unreviewed page
+                  const firstFresh = pages.find(p => {
+                    const pw = words.filter(w => w.pageId === p.id);
+                    return pw.every(w => w.reviewCount === 0);
+                  });
+                  onOpenNotebookPage(firstFresh ? firstFresh.id : 1);
+                }}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-stone-900 hover:bg-black text-white font-medium text-xs shadow flex items-center justify-center space-x-2 transition-all"
+              >
+                <BookOpen className="w-4 h-4 text-amber-400" />
+                <span>翻开手账本</span>
+              </button>
+
+              {onOpenPractice && (
+                <button
+                  onClick={() => onOpenPractice(1)}
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs shadow-sm flex items-center justify-center space-x-1.5 transition-all"
+                >
+                  <PenTool className="w-4 h-4 text-amber-700" />
+                  <span>手账练习区</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Resting Pages Timeline */}

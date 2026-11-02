@@ -128,7 +128,7 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
             <div className="flex items-start justify-between">
               <div className="space-y-1 flex-1 pr-2">
                 <div className="flex items-center space-x-2">
-                  <span className="font-serif font-bold text-stone-900 text-base">
+                  <span className="font-serif font-bold text-stone-900 text-lg sm:text-xl tracking-normal">
                     {word.text}
                   </span>
                   <button
@@ -139,8 +139,8 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage }) => {
                     <Volume2 className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="text-xs text-stone-600 line-clamp-2">
-                  {word.translations.join('; ')}
+                <div className="text-xs sm:text-sm text-stone-600 line-clamp-2 leading-relaxed">
+                  {word.translations.join('； ')}
                 </div>
               </div>
 

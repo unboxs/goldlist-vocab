@@ -232,25 +232,25 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
             </div>
 
             {/* Target Word */}
-            <div className="space-y-4 my-auto">
-              <div className="flex items-center justify-center space-x-3">
-                <h1 className="font-serif font-bold text-3xl sm:text-5xl text-stone-900 tracking-tight">
+            <div className="space-y-5 my-auto">
+              <div className="flex items-center justify-center space-x-3.5">
+                <h1 className="font-serif font-bold text-4xl sm:text-6xl text-stone-900 tracking-normal drop-shadow-sm">
                   {currentWord.text}
                 </h1>
                 <button
                   onClick={handlePlayAudio}
-                  className="p-2.5 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-800 transition-all shadow-sm"
+                  className="p-3 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 transition-all shadow-sm hover:scale-105 active:scale-95"
                   title="播放发音"
                 >
-                  <Volume2 className="w-5 h-5" />
+                  <Volume2 className="w-6 h-6" />
                 </button>
               </div>
 
               {/* Reveal or hidden translation */}
               {isRevealed ? (
                 <div className="space-y-2 pt-4 transition-all">
-                  <div className="text-lg sm:text-xl font-medium text-amber-950 font-sans">
-                    {currentWord.translations.join('; ')}
+                  <div className="text-xl sm:text-2xl font-bold text-amber-950 font-sans leading-relaxed">
+                    {currentWord.translations.join('； ')}
                   </div>
                   <p className="text-xs text-stone-500">
                     若未自然记住，将自动蒸馏誊写至：<strong>{getStageLabel(currentWord.stage).next}</strong>

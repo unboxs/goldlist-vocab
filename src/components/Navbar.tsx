@@ -1,7 +1,7 @@
 import React from 'react';
-import { BookOpen, Sparkles, LayoutDashboard, Database, HelpCircle, Settings } from 'lucide-react';
+import { BookOpen, Sparkles, LayoutDashboard, Database, HelpCircle, Settings, PenTool } from 'lucide-react';
 
-export type NavTab = 'dashboard' | 'notebook' | 'vault';
+export type NavTab = 'dashboard' | 'notebook' | 'practice' | 'vault';
 
 interface NavbarProps {
   currentTab: NavTab;
@@ -67,6 +67,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <BookOpen className="w-4 h-4 text-amber-600" />
             <span>黄金手账</span>
+          </button>
+
+          <button
+            onClick={() => onSelectTab('practice')}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              currentTab === 'practice'
+                ? 'bg-white text-stone-900 shadow-sm'
+                : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
+            }`}
+          >
+            <PenTool className="w-4 h-4 text-amber-600" />
+            <span>手账练习区</span>
           </button>
 
           <button

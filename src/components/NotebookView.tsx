@@ -21,6 +21,7 @@ interface NotebookViewProps {
   cooldownDays: number;
   onSelectPage: (pageId: number) => void;
   onStartDistillation: (pageId: number) => void;
+  onStartPractice?: (pageId: number) => void;
   onOpenGuide: () => void;
 }
 
@@ -31,6 +32,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
   cooldownDays,
   onSelectPage,
   onStartDistillation,
+  onStartPractice,
   onOpenGuide,
 }) => {
   const [filterMode, setFilterMode] = useState<'all' | 'needs-distill' | 'mastered'>('all');
@@ -125,6 +127,17 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
             </span>
           )}
 
+          {/* Practice button */}
+          {onStartPractice && (
+            <button
+              onClick={() => onStartPractice(currentPageId)}
+              className="py-2 px-3.5 rounded-xl bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-800 font-medium text-xs flex items-center space-x-1.5 transition-all shadow-sm"
+              title="针对本页单词进行听音拼写或手写练习"
+            >
+              <span>✍️ 练习本页</span>
+            </button>
+          )}
+
           {nonMastered.length > 0 && (
             <button
               onClick={() => onStartDistillation(currentPageId)}
@@ -185,35 +198,35 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
       </div>
 
       {/* THE CLASSIC 4-QUADRANT NOTEBOOK CANVAS */}
-      <div className="relative rounded-3xl bg-[#fdfbf7] border-2 border-[#d5cbba] shadow-notebook-lg overflow-hidden transition-all">
+      <div className="relative rounded-3xl bg-[#fdfbf7] border-2 border-[#dcd3c3] shadow-notebook-lg overflow-hidden transition-all">
         {/* Notebook Spine / Center Divider line aesthetic */}
-        <div className="hidden lg:block absolute inset-y-0 left-1/2 w-px bg-stone-300/80 pointer-events-none z-10" />
-        <div className="hidden lg:block absolute inset-x-0 top-1/2 h-px bg-stone-300/80 pointer-events-none z-10" />
+        <div className="hidden lg:block absolute inset-y-0 left-1/2 w-0.5 bg-stone-300/80 pointer-events-none z-10" />
+        <div className="hidden lg:block absolute inset-x-0 top-1/2 h-0.5 bg-stone-300/80 pointer-events-none z-10" />
 
         {/* 4 Quadrants Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-stone-300/80">
           {/* ================= QUADRANT A: TOP LEFT (HEADLIST) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 notebook-ruled-bg min-h-[460px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
             {/* Header of Quadrant A */}
-            <div className="flex items-center justify-between border-b-2 border-amber-800/20 pb-3">
+            <div className="flex items-center justify-between border-b-2 border-amber-800/30 pb-3.5">
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-2">
-                  <span className="font-serif font-bold text-lg text-amber-950">
+                  <span className="font-serif font-bold text-lg sm:text-xl text-amber-950">
                     象限 A · 原始列表 (Headlist)
                   </span>
-                  <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-mono text-xs font-bold">
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-900 rounded font-mono text-xs font-bold border border-amber-200">
                     20 词
                   </span>
                 </div>
-                <p className="text-[11px] text-stone-500">
+                <p className="text-xs text-stone-500">
                   初始接触 · 纯净手抄与跟读发音，不施加死记压力
                 </p>
               </div>
               <span className="text-xs text-amber-900/60 font-serif italic">Top Left</span>
             </div>
 
-            {/* Word list */}
-            <div className="space-y-2">
+            {/* Word list: Perfectly aligned ruled lines */}
+            <div className="divide-y divide-amber-900/10">
               {pageWords.map((word, index) => {
                 const isMastered = word.stage === 'mastered';
                 const isDistilledAway = word.stage !== 'headlist' && !isMastered;
@@ -221,56 +234,56 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
                 return (
                   <div
                     key={word.id}
-                    className={`flex items-start justify-between py-1.5 px-2 rounded-lg transition-all group ${
+                    className={`flex items-start justify-between py-2.5 px-2 rounded-lg transition-all group ${
                       isMastered
-                        ? 'bg-emerald-50/50 text-emerald-900'
+                        ? 'bg-emerald-50/50 text-emerald-950'
                         : isDistilledAway
-                        ? 'opacity-70 bg-stone-100/40 line-through text-stone-400'
-                        : 'hover:bg-amber-100/50 text-stone-900'
+                        ? 'opacity-65 bg-stone-100/30 line-through text-stone-400'
+                        : 'hover:bg-amber-100/40 text-stone-900'
                     }`}
                   >
-                    <div className="flex items-start space-x-3 flex-1 min-w-0">
-                      <span className="font-mono text-xs text-stone-400 w-5 flex-shrink-0 pt-0.5">
+                    <div className="flex items-start space-x-3.5 flex-1 min-w-0">
+                      <span className="font-mono text-xs font-semibold text-stone-400 w-5 flex-shrink-0 pt-1">
                         {index + 1}.
                       </span>
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="flex items-center space-x-2">
-                          <span className="font-serif font-bold text-stone-900 text-sm tracking-wide">
+                          <span className="font-serif font-bold text-stone-900 text-base sm:text-lg tracking-normal">
                             {word.text}
                           </span>
                           <button
                             onClick={(e) => handlePlayWord(word, e)}
-                            className="opacity-0 group-hover:opacity-100 text-amber-700 hover:text-amber-900 p-0.5 transition-opacity"
+                            className="text-amber-700/80 hover:text-amber-900 p-1 hover:bg-amber-200/50 rounded-full transition-colors"
                             title="播放原声发音"
                           >
-                            <Volume2 className="w-3.5 h-3.5" />
+                            <Volume2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="text-xs text-stone-600 font-sans truncate">
-                          {word.translations.join('; ')}
+                        <div className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                          {word.translations.join('； ')}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex-shrink-0 pl-2">
+                    <div className="flex-shrink-0 pl-2 pt-1">
                       {isMastered && (
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">
+                        <span className="text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium border border-emerald-200">
                           长时掌握 ✓
                         </span>
                       )}
                       {word.stage === 'd1' && (
-                        <span className="text-[10px] bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">
-                          进入铜级 →
+                        <span className="text-[11px] bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-medium border border-orange-200">
+                          铜级 →
                         </span>
                       )}
                       {word.stage === 'd2' && (
-                        <span className="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded font-medium">
-                          进入银级 →
+                        <span className="text-[11px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-medium border border-slate-300">
+                          银级 →
                         </span>
                       )}
                       {word.stage === 'd3' && (
-                        <span className="text-[10px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded font-medium">
-                          进入金级 →
+                        <span className="text-[11px] bg-yellow-100 text-yellow-900 px-2 py-0.5 rounded-full font-medium border border-yellow-300">
+                          金级 →
                         </span>
                       )}
                     </div>
@@ -281,20 +294,20 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
           </div>
 
           {/* ================= QUADRANT B: TOP RIGHT (1st DISTILLATION / BRONZE) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 notebook-ruled-bg min-h-[460px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
             {/* Header of Quadrant B */}
-            <div className="flex items-center justify-between border-b-2 border-orange-800/20 pb-3">
+            <div className="flex items-center justify-between border-b-2 border-orange-800/30 pb-3.5">
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-2">
-                  <span className="font-serif font-bold text-lg text-orange-950">
+                  <span className="font-serif font-bold text-lg sm:text-xl text-orange-950">
                     象限 B · 铜级蒸馏 (1st Distillation)
                   </span>
-                  <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded font-mono text-xs font-bold">
+                  <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded font-mono text-xs font-bold border border-orange-200">
                     目标 ~14 词
                   </span>
                 </div>
-                <p className="text-[11px] text-stone-500">
-                  休眠后第 1 次提炼 · 过滤留存 ~70% 未记住词汇
+                <p className="text-xs text-stone-500">
+                  休眠后第 1 次提炼 · 过滤留存 ~70% 未自然记住词汇
                 </p>
               </div>
               <span className="text-xs text-orange-900/60 font-serif italic">Top Right</span>
@@ -302,42 +315,42 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
 
             {/* List */}
             {d1Words.length > 0 || pageWords.some(w => ['d2', 'd3'].includes(w.stage)) ? (
-              <div className="space-y-2">
+              <div className="divide-y divide-amber-900/10">
                 {pageWords
                   .filter((w) => ['d1', 'd2', 'd3'].includes(w.stage) || (w.stage === 'mastered' && w.reviewCount >= 1))
                   .map((word, idx) => (
                     <div
                       key={word.id}
-                      className="flex items-start justify-between py-1.5 px-2 rounded-lg hover:bg-orange-50/60 transition-all group"
+                      className="flex items-start justify-between py-2.5 px-2 rounded-lg hover:bg-orange-50/60 transition-all group"
                     >
-                      <div className="flex items-start space-x-3 flex-1 min-w-0">
-                        <span className="font-mono text-xs text-orange-400 w-5 flex-shrink-0 pt-0.5">
+                      <div className="flex items-start space-x-3.5 flex-1 min-w-0">
+                        <span className="font-mono text-xs font-semibold text-orange-400 w-5 flex-shrink-0 pt-1">
                           {idx + 1}.
                         </span>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 space-y-0.5">
                           <div className="flex items-center space-x-2">
-                            <span className="font-serif font-bold text-stone-900 text-sm">
+                            <span className="font-serif font-bold text-stone-900 text-base sm:text-lg">
                               {word.text}
                             </span>
                             <button
                               onClick={(e) => handlePlayWord(word, e)}
-                              className="opacity-0 group-hover:opacity-100 text-orange-700 hover:text-orange-900 p-0.5"
+                              className="text-orange-700/80 hover:text-orange-900 p-1 hover:bg-orange-200/50 rounded-full"
                             >
-                              <Volume2 className="w-3.5 h-3.5" />
+                              <Volume2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="text-xs text-stone-600 truncate">
-                            {word.translations.join('; ')}
+                          <div className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                            {word.translations.join('； ')}
                           </div>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 pl-2">
+                      <div className="flex-shrink-0 pl-2 pt-1">
                         {word.stage === 'mastered' ? (
-                          <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">已掌握</span>
+                          <span className="text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">已掌握</span>
                         ) : word.stage === 'd2' ? (
-                          <span className="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded">转入银级</span>
+                          <span className="text-[11px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-medium">转入银级</span>
                         ) : (
-                          <span className="text-[10px] bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">铜级留存</span>
+                          <span className="text-[11px] bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-medium">铜级留存</span>
                         )}
                       </div>
                     </div>
@@ -345,8 +358,8 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
               </div>
             ) : (
               <div className="h-64 flex flex-col items-center justify-center text-center p-6 text-stone-400 space-y-2 border-2 border-dashed border-stone-200/80 rounded-2xl">
-                <Clock className="w-7 h-7 text-stone-300" />
-                <p className="text-xs font-serif italic text-stone-500">
+                <Clock className="w-8 h-8 text-stone-300" />
+                <p className="text-xs sm:text-sm font-serif italic text-stone-500 max-w-xs">
                   休眠期结束并完成第 1 次蒸馏后，未自然记住的 70% 词汇将工整誊写至此。
                 </p>
               </div>
@@ -354,19 +367,19 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
           </div>
 
           {/* ================= QUADRANT D: BOTTOM LEFT (3rd DISTILLATION / GOLD) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 notebook-ruled-bg min-h-[460px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
             {/* Header of Quadrant D */}
-            <div className="flex items-center justify-between border-b-2 border-yellow-800/20 pb-3">
+            <div className="flex items-center justify-between border-b-2 border-yellow-800/30 pb-3.5">
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-2">
-                  <span className="font-serif font-bold text-lg text-yellow-950">
+                  <span className="font-serif font-bold text-lg sm:text-xl text-yellow-950">
                     象限 D · 金级蒸馏 (3rd Distillation)
                   </span>
-                  <span className="px-2 py-0.5 bg-yellow-100 text-yellow-900 rounded font-mono text-xs font-bold">
+                  <span className="px-2 py-0.5 bg-yellow-100 text-yellow-900 rounded font-mono text-xs font-bold border border-yellow-300">
                     目标 ~7 词
                   </span>
                 </div>
-                <p className="text-[11px] text-stone-500">
+                <p className="text-xs text-stone-500">
                   休眠后第 3 次精炼 · 高抗遗忘终极攻坚池
                 </p>
               </div>
@@ -375,40 +388,40 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
 
             {/* List */}
             {d3Words.length > 0 || pageWords.some(w => w.stage === 'mastered' && w.reviewCount >= 3) ? (
-              <div className="space-y-2">
+              <div className="divide-y divide-amber-900/10">
                 {pageWords
                   .filter((w) => w.stage === 'd3' || (w.stage === 'mastered' && w.reviewCount >= 3))
                   .map((word, idx) => (
                     <div
                       key={word.id}
-                      className="flex items-start justify-between py-1.5 px-2 rounded-lg hover:bg-yellow-50/60 transition-all group"
+                      className="flex items-start justify-between py-2.5 px-2 rounded-lg hover:bg-yellow-50/60 transition-all group"
                     >
-                      <div className="flex items-start space-x-3 flex-1 min-w-0">
-                        <span className="font-mono text-xs text-yellow-600 w-5 flex-shrink-0 pt-0.5">
+                      <div className="flex items-start space-x-3.5 flex-1 min-w-0">
+                        <span className="font-mono text-xs font-semibold text-yellow-600 w-5 flex-shrink-0 pt-1">
                           {idx + 1}.
                         </span>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 space-y-0.5">
                           <div className="flex items-center space-x-2">
-                            <span className="font-serif font-bold text-stone-900 text-sm">
+                            <span className="font-serif font-bold text-stone-900 text-base sm:text-lg">
                               {word.text}
                             </span>
                             <button
                               onClick={(e) => handlePlayWord(word, e)}
-                              className="opacity-0 group-hover:opacity-100 text-yellow-700 hover:text-yellow-900 p-0.5"
+                              className="text-yellow-700/80 hover:text-yellow-900 p-1 hover:bg-yellow-200/50 rounded-full"
                             >
-                              <Volume2 className="w-3.5 h-3.5" />
+                              <Volume2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="text-xs text-stone-600 truncate">
-                            {word.translations.join('; ')}
+                          <div className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                            {word.translations.join('； ')}
                           </div>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 pl-2">
+                      <div className="flex-shrink-0 pl-2 pt-1">
                         {word.stage === 'mastered' ? (
-                          <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">深度巩固</span>
+                          <span className="text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">深度巩固</span>
                         ) : (
-                          <span className="text-[10px] bg-yellow-100 text-yellow-900 px-1.5 py-0.5 rounded">金级攻坚</span>
+                          <span className="text-[11px] bg-yellow-100 text-yellow-900 px-2 py-0.5 rounded-full font-medium">金级攻坚</span>
                         )}
                       </div>
                     </div>
@@ -416,8 +429,8 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
               </div>
             ) : (
               <div className="h-64 flex flex-col items-center justify-center text-center p-6 text-stone-400 space-y-2 border-2 border-dashed border-stone-200/80 rounded-2xl">
-                <Sparkles className="w-7 h-7 text-stone-300" />
-                <p className="text-xs font-serif italic text-stone-500">
+                <Sparkles className="w-8 h-8 text-stone-300" />
+                <p className="text-xs sm:text-sm font-serif italic text-stone-500 max-w-xs">
                   历经两次休眠蒸馏后，最具挑战性的少数高难度词汇将入驻金级象限。
                 </p>
               </div>
@@ -425,19 +438,19 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
           </div>
 
           {/* ================= QUADRANT C: BOTTOM RIGHT (2nd DISTILLATION / SILVER) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 notebook-ruled-bg min-h-[460px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
             {/* Header of Quadrant C */}
-            <div className="flex items-center justify-between border-b-2 border-slate-700/20 pb-3">
+            <div className="flex items-center justify-between border-b-2 border-slate-700/30 pb-3.5">
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-2">
-                  <span className="font-serif font-bold text-lg text-slate-900">
+                  <span className="font-serif font-bold text-lg sm:text-xl text-slate-900">
                     象限 C · 银级蒸馏 (2nd Distillation)
                   </span>
-                  <span className="px-2 py-0.5 bg-slate-200 text-slate-800 rounded font-mono text-xs font-bold">
+                  <span className="px-2 py-0.5 bg-slate-200 text-slate-800 rounded font-mono text-xs font-bold border border-slate-300">
                     目标 ~10 词
                   </span>
                 </div>
-                <p className="text-[11px] text-stone-500">
+                <p className="text-xs text-stone-500">
                   休眠后第 2 次精炼 · 再次提取 ~70% 难词
                 </p>
               </div>
@@ -446,42 +459,42 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
 
             {/* List */}
             {d2Words.length > 0 || pageWords.some(w => ['d3'].includes(w.stage) || (w.stage === 'mastered' && w.reviewCount >= 2)) ? (
-              <div className="space-y-2">
+              <div className="divide-y divide-amber-900/10">
                 {pageWords
                   .filter((w) => ['d2', 'd3'].includes(w.stage) || (w.stage === 'mastered' && w.reviewCount >= 2))
                   .map((word, idx) => (
                     <div
                       key={word.id}
-                      className="flex items-start justify-between py-1.5 px-2 rounded-lg hover:bg-slate-100/60 transition-all group"
+                      className="flex items-start justify-between py-2.5 px-2 rounded-lg hover:bg-slate-100/60 transition-all group"
                     >
-                      <div className="flex items-start space-x-3 flex-1 min-w-0">
-                        <span className="font-mono text-xs text-slate-500 w-5 flex-shrink-0 pt-0.5">
+                      <div className="flex items-start space-x-3.5 flex-1 min-w-0">
+                        <span className="font-mono text-xs font-semibold text-slate-500 w-5 flex-shrink-0 pt-1">
                           {idx + 1}.
                         </span>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 space-y-0.5">
                           <div className="flex items-center space-x-2">
-                            <span className="font-serif font-bold text-stone-900 text-sm">
+                            <span className="font-serif font-bold text-stone-900 text-base sm:text-lg">
                               {word.text}
                             </span>
                             <button
                               onClick={(e) => handlePlayWord(word, e)}
-                              className="opacity-0 group-hover:opacity-100 text-slate-700 hover:text-slate-900 p-0.5"
+                              className="text-slate-700/80 hover:text-slate-900 p-1 hover:bg-slate-200/50 rounded-full"
                             >
-                              <Volume2 className="w-3.5 h-3.5" />
+                              <Volume2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="text-xs text-stone-600 truncate">
-                            {word.translations.join('; ')}
+                          <div className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                            {word.translations.join('； ')}
                           </div>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 pl-2">
+                      <div className="flex-shrink-0 pl-2 pt-1">
                         {word.stage === 'mastered' ? (
-                          <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">已掌握</span>
+                          <span className="text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">已掌握</span>
                         ) : word.stage === 'd3' ? (
-                          <span className="text-[10px] bg-yellow-100 text-yellow-900 px-1.5 py-0.5 rounded">转入金级</span>
+                          <span className="text-[11px] bg-yellow-100 text-yellow-900 px-2 py-0.5 rounded-full font-medium">转入金级</span>
                         ) : (
-                          <span className="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded">银级留存</span>
+                          <span className="text-[11px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-medium">银级留存</span>
                         )}
                       </div>
                     </div>
@@ -489,8 +502,8 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
               </div>
             ) : (
               <div className="h-64 flex flex-col items-center justify-center text-center p-6 text-stone-400 space-y-2 border-2 border-dashed border-stone-200/80 rounded-2xl">
-                <Sparkles className="w-7 h-7 text-stone-300" />
-                <p className="text-xs font-serif italic text-stone-500">
+                <Sparkles className="w-8 h-8 text-stone-300" />
+                <p className="text-xs sm:text-sm font-serif italic text-stone-500 max-w-xs">
                   第二轮休眠后，从铜级列表提炼出难点单词，进入银级象限。
                 </p>
               </div>

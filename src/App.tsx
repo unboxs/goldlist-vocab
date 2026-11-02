@@ -3,6 +3,7 @@ import { Navbar, NavTab } from './components/Navbar';
 import { TodayDashboard } from './components/TodayDashboard';
 import { NotebookView } from './components/NotebookView';
 import { WordVault } from './components/WordVault';
+import { PracticeArena } from './components/PracticeArena';
 import { DistillSession } from './components/DistillSession';
 import { GoldListGuideModal } from './components/GoldListGuideModal';
 import { SettingsModal } from './components/SettingsModal';
@@ -74,6 +75,11 @@ export const App: React.FC = () => {
   const handleStartDistillation = (pageId: number) => {
     setDistillPageId(pageId);
     setIsDistilling(true);
+  };
+
+  const handleStartPractice = (pageId: number) => {
+    setSelectedPageId(pageId);
+    setCurrentTab('practice');
   };
 
   const handleFinishDistillation = async () => {
@@ -151,6 +157,7 @@ export const App: React.FC = () => {
               setCurrentTab('notebook');
             }}
             onStartDistillation={handleStartDistillation}
+            onOpenPractice={handleStartPractice}
             onOpenGuide={() => setIsGuideOpen(true)}
           />
         )}
@@ -163,7 +170,20 @@ export const App: React.FC = () => {
             cooldownDays={settings.cooldownDays}
             onSelectPage={setSelectedPageId}
             onStartDistillation={handleStartDistillation}
+            onStartPractice={handleStartPractice}
             onOpenGuide={() => setIsGuideOpen(true)}
+          />
+        )}
+
+        {currentTab === 'practice' && (
+          <PracticeArena
+            words={words}
+            pages={pages}
+            initialPageId={selectedPageId}
+            onGoToPage={(pid) => {
+              setSelectedPageId(pid);
+              setCurrentTab('notebook');
+            }}
           />
         )}
 
