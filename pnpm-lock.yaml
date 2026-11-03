@@ -17,9 +17,15 @@ importers:
       idb-keyval:
         specifier: ^6.2.1
         version: 6.3.0
+      iink-ts:
+        specifier: ^4.1.0
+        version: 4.1.0
       lucide-react:
         specifier: ^1.16.0
         version: 1.66.0(@types/react@18.3.31)(react@18.3.1)
+      perfect-freehand:
+        specifier: ^1.2.3
+        version: 1.2.3
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -656,6 +662,10 @@ packages:
   idb-keyval@6.3.0:
     resolution: {integrity: sha512-um+2dgAWmYsu615EXpWVwSmapJhON0G43t3Ka/EVaohzPQXSMqKEqeDK/oIW3Ow+BXaF2PvSc+oBTFp793A5Ow==}
 
+  iink-ts@4.1.0:
+    resolution: {integrity: sha512-/y9F1U45RcQ+wzSlWi2WcUwceeb2fu8SrN4QXyEWC1eXw3ZiJQ6mChJSdnLOyAk1cjmpMoBDUyxY5ZFs6EuwFg==}
+    engines: {node: '>=22'}
+
   is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
@@ -687,6 +697,9 @@ packages:
     resolution: {integrity: sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==}
     engines: {node: '>=6'}
     hasBin: true
+
+  json-css@1.5.6:
+    resolution: {integrity: sha512-B/0T0OxZH9tSb93tXV6VOYtXqrPz/Vgz2QrCT/4NXen8HGElYkYr9V+8IrSVTMj/ftxa8cG1kcu7f3iAMlaFlQ==}
 
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
@@ -753,6 +766,9 @@ packages:
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
+
+  perfect-freehand@1.2.3:
+    resolution: {integrity: sha512-bHZSfqDHGNlPpgH2yxXgPHlQSPpEbo+qg7li0M78J9vNAi2yjwLeA4x79BEQhX44lEWpCLSFCeRZwpw0niiXPA==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -1449,6 +1465,10 @@ snapshots:
 
   idb-keyval@6.3.0: {}
 
+  iink-ts@4.1.0:
+    dependencies:
+      json-css: 1.5.6
+
   is-binary-path@2.1.0:
     dependencies:
       binary-extensions: 2.3.0
@@ -1470,6 +1490,8 @@ snapshots:
   js-tokens@4.0.0: {}
 
   jsesc@3.1.0: {}
+
+  json-css@1.5.6: {}
 
   json5@2.2.3: {}
 
@@ -1517,6 +1539,8 @@ snapshots:
   object-hash@3.0.0: {}
 
   path-parse@1.0.7: {}
+
+  perfect-freehand@1.2.3: {}
 
   picocolors@1.1.1: {}
 

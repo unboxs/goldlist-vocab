@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { WordItem, GoldListPage } from '../types/goldlist';
 import { sound } from '../services/sound';
+import { HandwritingBoard } from './HandwritingBoard';
 import confetti from 'canvas-confetti';
 
 interface PracticeArenaProps {
@@ -68,13 +69,6 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
   const [isFinished, setIsFinished] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Handwriting canvas state
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [penColor, setPenColor] = useState('#1e293b'); // Dark ink
-  const [penSize, setPenSize] = useState(3);
-  const [showCanvasGuide, setShowCanvasGuide] = useState(true);
-
   // Reset states on word change
   useEffect(() => {
     if (!currentWord) return;
@@ -82,7 +76,6 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
     setIsAnswerRevealed(false);
     setFeedback('idle');
     setHintCount(0);
-    clearCanvas();
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -129,53 +122,6 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
     const revealedLength = Math.min(hintCount + 1, target.length);
     setUserInput(target.slice(0, revealedLength));
     if (inputRef.current) inputRef.current.focus();
-  };
-
-  // Canvas drawing handlers
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.strokeStyle = penColor;
-    ctx.lineWidth = penSize;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    setIsDrawing(true);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
-  };
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const handleRestart = () => {
@@ -430,121 +376,36 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
             </div>
           )}
 
-          {/* MODE 2: Handwriting Canvas */}
+          {/* MODE 2: Handwriting Whiteboard powered by perfect-freehand & MyScript iinkTS */}
           {mode === 'handwriting' && (
-            <div className="bg-[#fdfbf7] rounded-3xl p-6 sm:p-8 border border-amber-900/10 shadow-notebook-lg space-y-6">
-              {/* Word Display Banner */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-stone-200 pb-4">
-                <div className="space-y-1 text-center sm:text-left">
-                  <div className="flex items-center justify-center sm:justify-start space-x-3">
-                    <span className="font-serif font-bold text-2xl sm:text-3xl text-stone-900 tracking-wide">
-                      {currentWord.text}
-                    </span>
-                    <button
-                      onClick={() => sound.playPronunciation(currentWord.text, currentWord.audioURL)}
-                      className="p-1.5 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-800 transition-colors"
-                      title="播放发音"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="text-sm font-medium text-stone-600">
-                    {currentWord.translations.join('; ')}
-                  </div>
-                </div>
+            <div className="space-y-4">
+              <HandwritingBoard
+                targetWord={currentWord.text}
+                translations={currentWord.translations}
+                audioURL={currentWord.audioURL}
+                onSuccess={handleNextWord}
+              />
 
-                {/* Canvas Controls */}
-                <div className="flex items-center space-x-2">
-                  {/* Colors */}
-                  <div className="flex items-center space-x-1 bg-stone-100 p-1 rounded-xl">
-                    {[
-                      { color: '#1e293b', label: '墨黑' },
-                      { color: '#1d4ed8', label: '钢笔蓝' },
-                      { color: '#b45309', label: '琥珀棕' },
-                    ].map((c) => (
-                      <button
-                        key={c.color}
-                        onClick={() => setPenColor(c.color)}
-                        className={`w-6 h-6 rounded-lg transition-transform ${
-                          penColor === c.color ? 'scale-110 ring-2 ring-stone-400' : 'opacity-70'
-                        }`}
-                        style={{ backgroundColor: c.color }}
-                        title={c.label}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Pen Size */}
-                  <div className="flex items-center space-x-1 bg-stone-100 p-1 rounded-xl text-xs">
-                    {[2, 3, 5].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setPenSize(s)}
-                        className={`px-2 py-1 rounded-md font-medium ${
-                          penSize === s ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500'
-                        }`}
-                      >
-                        {s === 2 ? '细' : s === 3 ? '中' : '粗'}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={clearCanvas}
-                    className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 transition-colors"
-                    title="清空手写板"
-                  >
-                    <Eraser className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* The Drawing Canvas Box with Paper Guidelines */}
-              <div className="relative rounded-2xl border-2 border-stone-300 bg-[#fefcf9] overflow-hidden shadow-inner">
-                {/* Visual guidelines */}
-                {showCanvasGuide && (
-                  <div className="absolute inset-0 pointer-events-none flex flex-col justify-around opacity-30">
-                    <div className="w-full border-b border-dashed border-sky-400 h-1/4" />
-                    <div className="w-full border-b border-red-400 h-1/4" />
-                    <div className="w-full border-b border-dashed border-sky-400 h-1/4" />
-                  </div>
-                )}
-
-                <canvas
-                  ref={canvasRef}
-                  width={800}
-                  height={300}
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDrawing}
-                  className="w-full h-64 sm:h-72 cursor-crosshair touch-none"
-                />
-
-                <div className="absolute bottom-3 left-4 text-[11px] text-stone-400 pointer-events-none">
-                  ✍️ 在此手写临摹单词 3~5 遍，刺激运动记忆神经
-                </div>
-              </div>
-
-              {/* Bottom Nav */}
-              <div className="flex items-center justify-between pt-2">
+              {/* Navigation Bar */}
+              <div className="flex items-center justify-between pt-1 px-1">
                 <button
                   onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                   disabled={currentIndex === 0}
-                  className="px-4 py-2 rounded-xl border border-stone-300 hover:bg-stone-100 disabled:opacity-40 text-stone-700 text-xs font-medium flex items-center space-x-1"
+                  className="px-4 py-2.5 rounded-xl border border-stone-300 hover:bg-stone-100 disabled:opacity-40 text-stone-700 text-xs font-medium flex items-center space-x-1 transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>上一个词</span>
                 </button>
 
+                <div className="text-xs text-stone-500 font-mono">
+                  {currentIndex + 1} / {practiceWords.length}
+                </div>
+
                 <button
                   onClick={handleNextWord}
-                  className="px-6 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold shadow-md flex items-center space-x-1"
+                  className="px-6 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold shadow-md flex items-center space-x-1 transition-colors"
                 >
-                  <span>抄写完成，下一个</span>
+                  <span>下一个词</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
