@@ -37,20 +37,21 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
   const page = pages.find((p) => p.id === pageId);
   const now = Date.now();
 
-  // Find candidate words in this page that need reviewing:
-  // Words that are NOT mastered, sorted by stage
-  const sessionCandidates = words
-    .filter((w) => w.pageId === pageId && w.stage !== 'mastered')
-    .sort((a, b) => {
-      const stageOrder: Record<DistillationStage, number> = {
-        headlist: 1,
-        d1: 2,
-        d2: 3,
-        d3: 4,
-        mastered: 5,
-      };
-      return stageOrder[a.stage] - stageOrder[b.stage];
-    });
+  // Snapshot at session start: db mutates word objects in place, so a live filter would shrink mid-session
+  const [sessionCandidates] = useState(() =>
+    words
+      .filter((w) => w.pageId === pageId && w.stage !== 'mastered')
+      .sort((a, b) => {
+        const stageOrder: Record<DistillationStage, number> = {
+          headlist: 1,
+          d1: 2,
+          d2: 3,
+          d3: 4,
+          mastered: 5,
+        };
+        return stageOrder[a.stage] - stageOrder[b.stage];
+      })
+  );
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
