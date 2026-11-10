@@ -20,6 +20,12 @@ export interface WordItem {
   reviewCount: number;
   notes?: string; // Custom sentence / mnemonic note
   isStarred?: boolean; // Star / difficulty marker
+  practicePassed?: boolean; // Spelled right on first try in practice; skipped by targeted practice
+}
+
+export interface WordBreakdown {
+  parts: { text: string; meaning: string }[];
+  tip: string;
 }
 
 export interface GoldListPage {

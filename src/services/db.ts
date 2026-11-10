@@ -232,6 +232,24 @@ class DBService {
     await set(STORAGE_KEYS.WORDS, this.wordsCache);
   }
 
+  // Record practice result for targeted practice
+  public async setPracticePassed(wordId: string, passed: boolean): Promise<void> {
+    await this.loadCache();
+    const word = this.wordsCache?.find((w) => w.id === wordId);
+    if (!word) return;
+    word.practicePassed = passed;
+    await set(STORAGE_KEYS.WORDS, this.wordsCache);
+  }
+
+  public async resetPracticeProgress(wordIds: string[]): Promise<void> {
+    await this.loadCache();
+    const ids = new Set(wordIds);
+    this.wordsCache?.forEach((w) => {
+      if (ids.has(w.id)) w.practicePassed = false;
+    });
+    await set(STORAGE_KEYS.WORDS, this.wordsCache);
+  }
+
   // Save last visited page bookmark
   public async setLastVisitedPage(pageId: number): Promise<void> {
     await this.loadCache();

@@ -17,8 +17,9 @@ import {
   Award,
   BookOpen
 } from 'lucide-react';
-import { WordItem, GoldListPage } from '../types/goldlist';
+import { WordItem, GoldListPage, WordBreakdown } from '../types/goldlist';
 import { sound } from '../services/sound';
+import { db } from '../services/db';
 import { HandwritingBoard } from './HandwritingBoard';
 import confetti from 'canvas-confetti';
 
@@ -30,6 +31,26 @@ interface PracticeArenaProps {
 }
 
 type PracticeMode = 'spelling' | 'handwriting';
+type PracticeScope = 'page' | 'pipeline' | 'starred' | 'all';
+
+const getScopeWords = (words: WordItem[], pageId: number, scope: PracticeScope): WordItem[] => {
+  if (scope === 'page') {
+    return words.filter((w) => w.pageId === pageId);
+  } else if (scope === 'starred') {
+    const starred = words.filter((w) => w.isStarred);
+    return starred.length > 0 ? starred : words.filter((w) => w.pageId === pageId);
+  } else if (scope === 'pipeline') {
+    return words.filter((w) => ['headlist', 'd1', 'd2', 'd3'].includes(w.stage));
+  }
+  return words;
+};
+
+// Targeted practice: skip words already spelled right on first try; if all are passed, use the full scope
+const buildRound = (scopeWords: WordItem[], scope: PracticeScope): WordItem[] => {
+  const unpassed = scopeWords.filter((w) => !w.practicePassed);
+  const pool = unpassed.length > 0 ? unpassed : scopeWords;
+  return scope === 'pipeline' || scope === 'all' ? pool.slice(0, 30) : pool;
+};
 
 export const PracticeArena: React.FC<PracticeArenaProps> = ({
   words,
@@ -41,20 +62,16 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
   const [mode, setMode] = useState<PracticeMode>('spelling');
   const [filterScope, setFilterScope] = useState<'page' | 'pipeline' | 'starred' | 'all'>('page');
 
-  // Words pool for practice
-  const practiceWords = React.useMemo(() => {
-    if (filterScope === 'page') {
-      return words.filter((w) => w.pageId === selectedPageId);
-    } else if (filterScope === 'starred') {
-      const starred = words.filter((w) => w.isStarred);
-      return starred.length > 0 ? starred : words.filter((w) => w.pageId === selectedPageId);
-    } else if (filterScope === 'pipeline') {
-      const pipelineWords = words.filter((w) => ['headlist', 'd1', 'd2', 'd3'].includes(w.stage));
-      return pipelineWords.slice(0, 30);
-    } else {
-      return words.slice(0, 30);
-    }
-  }, [words, selectedPageId, filterScope]);
+  const scopeWords = getScopeWords(words, selectedPageId, filterScope);
+  const passedCount = scopeWords.filter((w) => w.practicePassed).length;
+  const allPassed = scopeWords.length > 0 && passedCount === scopeWords.length;
+
+  // Round word list, rebuilt only on restart: passing a word mid-round must not shrink the list
+  const [roundId, setRoundId] = useState(0);
+  const practiceWords = React.useMemo(
+    () => buildRound(getScopeWords(words, selectedPageId, filterScope), filterScope),
+    [roundId]
+  );
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentWord = practiceWords[currentIndex] || practiceWords[0];
@@ -64,10 +81,38 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const [feedback, setFeedback] = useState<'idle' | 'correct' | 'incorrect'>('idle');
   const [hintCount, setHintCount] = useState(0);
+  const [missed, setMissed] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [historyResults, setHistoryResults] = useState<{ word: WordItem; passed: boolean }[]>([]);
   const [isFinished, setIsFinished] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [breakdowns, setBreakdowns] = useState<Record<string, WordBreakdown> | null>(null);
+  useEffect(() => {
+    fetch('/data/breakdowns.json')
+      .then((res) => res.json())
+      .then(setBreakdowns)
+      .catch((err) => console.error('Failed to load breakdowns:', err));
+  }, []);
+  const breakdown = currentWord && breakdowns?.[currentWord.text.trim().toLowerCase()];
+
+  const handleTogglePeek = () => {
+    if (!isAnswerRevealed) setMissed(true);
+    setIsAnswerRevealed((prev) => !prev);
+  };
+
+  // Esc peeks at the answer in spelling mode
+  useEffect(() => {
+    if (mode !== 'spelling') return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleTogglePeek();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [mode, isAnswerRevealed]);
 
   // Reset states on word change
   useEffect(() => {
@@ -76,6 +121,7 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
     setIsAnswerRevealed(false);
     setFeedback('idle');
     setHintCount(0);
+    setMissed(false);
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -96,12 +142,15 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
       sound.playMasterChime();
       setScore((prev) => ({ correct: prev.correct + 1, total: prev.total + 1 }));
       setHistoryResults((prev) => [...prev, { word: currentWord, passed: true }]);
+      db.setPracticePassed(currentWord.id, !missed && hintCount === 0 && !isAnswerRevealed);
 
       setTimeout(() => {
         handleNextWord();
       }, 1100);
     } else {
       setFeedback('incorrect');
+      setMissed(true);
+      db.setPracticePassed(currentWord.id, false);
       sound.playDistillSound();
     }
   };
@@ -125,10 +174,17 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
   };
 
   const handleRestart = () => {
+    setRoundId((prev) => prev + 1);
     setCurrentIndex(0);
     setIsFinished(false);
     setScore({ correct: 0, total: 0 });
     setHistoryResults([]);
+  };
+
+  const handleResetProgress = async () => {
+    if (!window.confirm(`确定重置本范围 ${scopeWords.length} 个词的练习进度吗？`)) return;
+    await db.resetPracticeProgress(scopeWords.map((w) => w.id));
+    handleRestart();
   };
 
   if (!currentWord) {
@@ -256,6 +312,23 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
       {/* Main Practice Container */}
       {!isFinished ? (
         <div className="space-y-6">
+          {passedCount > 0 && (
+            <div className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
+              <Sparkles className="w-4 h-4 text-emerald-600" />
+              <span>
+                {allPassed
+                  ? '本范围词已全部一次拼对，本轮按全部词重新练习。'
+                  : `已启用针对性练习：跳过 ${passedCount} 个已一次拼对的词，本轮练习 ${practiceWords.length} 个。`}
+              </span>
+              <button
+                onClick={handleResetProgress}
+                className="ml-auto px-2.5 py-1 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 font-medium transition-colors"
+              >
+                重置练习进度
+              </button>
+            </div>
+          )}
+
           {/* Progress Header */}
           <div className="flex items-center justify-between text-xs text-stone-500 px-1">
             <div className="flex items-center space-x-2">
@@ -309,6 +382,24 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
                 )}
               </div>
 
+              {/* Word breakdown: shown after a miss or a peek */}
+              {missed && breakdown && (
+                <div className="max-w-md mx-auto p-4 bg-amber-50 rounded-2xl border border-amber-200 text-left space-y-3">
+                  <div className="text-xs font-semibold text-amber-800">拆词记忆</div>
+                  {breakdown.parts.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {breakdown.parts.map((part, i) => (
+                        <span key={i} className="px-2.5 py-1 bg-white rounded-lg border border-amber-200 text-xs">
+                          <strong className="font-serif text-sm text-stone-900">{part.text}</strong>
+                          <span className="ml-1 text-stone-600">{part.meaning}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-sm text-stone-800">{breakdown.tip}</p>
+                </div>
+              )}
+
               {/* Input Form */}
               <form onSubmit={handleCheckSpelling} className="max-w-md mx-auto space-y-4">
                 <div className="relative">
@@ -357,11 +448,11 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => setIsAnswerRevealed((prev) => !prev)}
+                    onClick={handleTogglePeek}
                     className="flex items-center space-x-1 px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 font-medium transition-colors"
                   >
                     {isAnswerRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    <span>{isAnswerRevealed ? '隐藏答案' : '偷看答案'}</span>
+                    <span>{isAnswerRevealed ? '隐藏答案 (Esc)' : '偷看答案 (Esc)'}</span>
                   </button>
 
                   <button
