@@ -63,15 +63,19 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
   const [filterScope, setFilterScope] = useState<'page' | 'pipeline' | 'starred' | 'all'>('page');
 
   const scopeWords = getScopeWords(words, selectedPageId, filterScope);
-  const passedCount = scopeWords.filter((w) => w.practicePassed).length;
-  const allPassed = scopeWords.length > 0 && passedCount === scopeWords.length;
 
   // Round word list, rebuilt only on restart: passing a word mid-round must not shrink the list
   const [roundId, setRoundId] = useState(0);
-  const practiceWords = React.useMemo(
-    () => buildRound(getScopeWords(words, selectedPageId, filterScope), filterScope),
-    [roundId]
-  );
+  const round = React.useMemo(() => {
+    const scope = getScopeWords(words, selectedPageId, filterScope);
+    const passed = scope.filter((w) => w.practicePassed).length;
+    return {
+      words: buildRound(scope, filterScope),
+      skipped: passed,
+      allPassed: scope.length > 0 && passed === scope.length,
+    };
+  }, [roundId]);
+  const practiceWords = round.words;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentWord = practiceWords[currentIndex] || practiceWords[0];
@@ -312,13 +316,13 @@ export const PracticeArena: React.FC<PracticeArenaProps> = ({
       {/* Main Practice Container */}
       {!isFinished ? (
         <div className="space-y-6">
-          {passedCount > 0 && (
+          {round.skipped > 0 && (
             <div className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
               <Sparkles className="w-4 h-4 text-emerald-600" />
               <span>
-                {allPassed
+                {round.allPassed
                   ? '本范围词已全部一次拼对，本轮按全部词重新练习。'
-                  : `已启用针对性练习：跳过 ${passedCount} 个已一次拼对的词，本轮练习 ${practiceWords.length} 个。`}
+                  : `已启用针对性练习：跳过 ${round.skipped} 个已一次拼对的词，本轮练习 ${practiceWords.length} 个。`}
               </span>
               <button
                 onClick={handleResetProgress}
