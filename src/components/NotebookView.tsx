@@ -234,12 +234,8 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
 
       {/* THE CLASSIC 4-QUADRANT NOTEBOOK CANVAS */}
       <div className="relative rounded-3xl bg-[#fdfbf7] border-2 border-[#dcd3c3] shadow-notebook-lg overflow-hidden transition-all">
-        {/* Notebook Spine / Center Divider line aesthetic */}
-        <div className="hidden lg:block absolute inset-y-0 left-1/2 w-0.5 bg-stone-300/80 pointer-events-none z-10" />
-        <div className="hidden lg:block absolute inset-x-0 top-1/2 h-0.5 bg-stone-300/80 pointer-events-none z-10" />
-
-        {/* 4 Quadrants Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-stone-300/80">
+        {/* 4 Quadrants Grid: gap-px exposes the background as the dividers */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-stone-300/80">
           {/* ================= QUADRANT A: TOP LEFT (HEADLIST) ================= */}
           <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[280px] lg:min-h-[500px]">
             {/* Header of Quadrant A */}
