@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { isDue } from '../services/db';
 import { 
   Volume2, 
   ChevronLeft, 
@@ -64,7 +65,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
 
   // Cooldown status for the page
   const nonMastered = pageWords.filter((w) => w.stage !== 'mastered');
-  const eligibleWords = nonMastered.filter((w) => w.nextEligibleAt <= now);
+  const eligibleWords = nonMastered.filter((w) => isDue(w, pages.find((p) => p.id === currentPageId), now));
   const nearestTime = nonMastered.length > 0 ? Math.min(...nonMastered.map(w => w.nextEligibleAt)) : 0;
   const isReady = eligibleWords.length > 0 && nonMastered.length > 0;
   const daysLeft = Math.max(0, Math.ceil((nearestTime - now) / (24 * 60 * 60 * 1000)));
@@ -73,7 +74,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
   const filteredPages = pages.filter((p) => {
     const pw = words.filter((w) => w.pageId === p.id);
     const pNonMastered = pw.filter((w) => w.stage !== 'mastered');
-    const pEligible = pNonMastered.filter((w) => w.nextEligibleAt <= now);
+    const pEligible = pNonMastered.filter((w) => isDue(w, p, now));
     
     if (filterMode === 'needs-distill') {
       return pEligible.length > 0;

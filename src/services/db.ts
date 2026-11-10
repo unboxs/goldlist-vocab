@@ -8,6 +8,13 @@ const STORAGE_KEYS = {
   INITIALIZED: 'goldlist_initialized_v1',
 };
 
+const MAX_D3_FAILURES = 3;
+
+// A headlist word on a page never opened has no cooldown yet, so it is not due
+export const isDue = (word: WordItem, page: GoldListPage | undefined, now: number): boolean =>
+  word.nextEligibleAt <= now &&
+  !(word.stage === 'headlist' && word.reviewCount === 0 && !page?.headlistStartedAt);
+
 export const DEFAULT_SETTINGS: AppSettings = {
   wordsPerPage: 20,
   cooldownDays: 14, // Uncle Davey's canonical 14-day rule
@@ -177,7 +184,14 @@ class DBService {
           nextStage = 'd3';
           break;
         case 'd3':
-          nextStage = 'mastered'; // After D3, remaining words are sealed into mastery or final review
+          // Not remembered at D3: retry after cooldown, until the cap marks it stubborn
+          word.d3Failures = (word.d3Failures ?? 0) + 1;
+          if (word.d3Failures >= MAX_D3_FAILURES) {
+            nextStage = 'mastered';
+            word.isStubborn = true;
+          } else {
+            nextStage = 'd3';
+          }
           break;
         default:
           nextStage = 'mastered';
@@ -211,6 +225,23 @@ class DBService {
         await set(STORAGE_KEYS.PAGES, this.pagesCache);
       }
     }
+  }
+
+  // First visit to a page starts the cooldown for its untested headlist words
+  public async startPageCooldown(pageId: number): Promise<void> {
+    await this.loadCache();
+    const page = this.pagesCache?.find((p) => p.id === pageId);
+    if (!page || page.headlistStartedAt) return;
+    const now = Date.now();
+    const cooldownMs = (await this.getSettings()).cooldownDays * 24 * 60 * 60 * 1000;
+    page.headlistStartedAt = now;
+    (this.wordsCache || [])
+      .filter((w) => w.pageId === pageId && w.stage === 'headlist' && w.reviewCount === 0)
+      .forEach((w) => {
+        w.nextEligibleAt = now + cooldownMs;
+      });
+    await set(STORAGE_KEYS.PAGES, this.pagesCache);
+    await set(STORAGE_KEYS.WORDS, this.wordsCache);
   }
 
   // Toggle word starred

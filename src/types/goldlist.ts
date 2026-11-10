@@ -21,6 +21,8 @@ export interface WordItem {
   notes?: string; // Custom sentence / mnemonic note
   isStarred?: boolean; // Star / difficulty marker
   practicePassed?: boolean; // Spelled right on first try in practice; skipped by targeted practice
+  d3Failures?: number; // Times not remembered at D3
+  isStubborn?: boolean; // Hit the D3 cap and was sealed into the vault
 }
 
 export interface WordBreakdown {
@@ -34,6 +36,7 @@ export interface GoldListPage {
   createdAt: number;
   cooldownDays: number;
   // Stage completion timestamps
+  headlistStartedAt?: number; // First time the page was opened; starts the headlist cooldown
   headlistCompletedAt?: number;
   d1CompletedAt?: number;
   d2CompletedAt?: number;

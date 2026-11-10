@@ -72,6 +72,7 @@ export const App: React.FC = () => {
       try {
         setIsLoading(true);
         await db.init();
+        await db.startPageCooldown((await db.getSettings()).lastVisitedPageId || 1);
         await refreshData();
       } catch (err: unknown) {
         console.error('App init error:', err);
@@ -84,9 +85,11 @@ export const App: React.FC = () => {
     initApp();
   }, []);
 
-  const handleSelectPage = (pid: number) => {
+  const handleSelectPage = async (pid: number) => {
     setSelectedPageId(pid);
     db.setLastVisitedPage(pid);
+    await db.startPageCooldown(pid);
+    await refreshData();
   };
 
   const handleStartDistillation = (pageId: number) => {

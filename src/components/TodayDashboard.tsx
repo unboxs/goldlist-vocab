@@ -1,4 +1,5 @@
 import React from 'react';
+import { isDue } from '../services/db';
 import { 
   Sparkles, 
   Flame, 
@@ -53,7 +54,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   const pagesWithStatus = pages.map((page) => {
     const pageWords = words.filter((w) => w.pageId === page.id);
     const nonMastered = pageWords.filter((w) => w.stage !== 'mastered');
-    const eligibleWords = nonMastered.filter((w) => w.nextEligibleAt <= now);
+    const eligibleWords = nonMastered.filter((w) => isDue(w, page, now));
     
     // Nearest eligible word time
     const nextTime = nonMastered.length > 0 

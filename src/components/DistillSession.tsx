@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { WordItem, GoldListPage, DistillationStage } from '../types/goldlist';
 import { sound } from '../services/sound';
-import { db } from '../services/db';
+import { db, isDue } from '../services/db';
 
 interface DistillSessionProps {
   pageId: number;
@@ -40,7 +40,7 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
   // Snapshot at session start: db mutates word objects in place, so a live filter would shrink mid-session
   const [sessionCandidates] = useState(() =>
     words
-      .filter((w) => w.pageId === pageId && w.stage !== 'mastered')
+      .filter((w) => w.pageId === pageId && w.stage !== 'mastered' && isDue(w, page, now))
       .sort((a, b) => {
         const stageOrder: Record<DistillationStage, number> = {
           headlist: 1,
@@ -114,24 +114,22 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
     }
   };
 
-  // Keyboard shortcuts
+  // Keyboard: space reveals, then 1 / ← = 没记住, 2 / → = 记住了 (only after reveal)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isCompleted) return;
       if (e.code === 'Space') {
         e.preventDefault();
-        setIsRevealed((prev) => !prev);
-      } else if (e.code === 'ArrowLeft' || e.key === '1') {
-        // Did not remember -> distill
+        setIsRevealed(true);
+      } else if (isRevealed && (e.code === 'ArrowLeft' || e.key === '1')) {
         handleDecision(false);
-      } else if (e.code === 'ArrowRight' || e.key === '2') {
-        // Remembered -> master
+      } else if (isRevealed && (e.code === 'ArrowRight' || e.key === '2')) {
         handleDecision(true);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, isCompleted, currentWord]);
+  }, [isCompleted, isRevealed, currentIndex, sessionResults, currentWord]);
 
   // Stage labels
   const getStageLabel = (stage: DistillationStage) => {
@@ -143,7 +141,7 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
       case 'd2':
         return { name: '第 2 次蒸馏 (D2 银级)', next: '金级蒸馏 (D3)', color: 'text-slate-800 bg-slate-200' };
       case 'd3':
-        return { name: '第 3 次蒸馏 (D3 金级)', next: '长时巩固金库', color: 'text-yellow-900 bg-yellow-200' };
+        return { name: '第 3 次蒸馏 (D3 金级)', next: '留在金级继续攻坚 (D3)', color: 'text-yellow-900 bg-yellow-200' };
       default:
         return { name: '永久长时记忆', next: '已巩固', color: 'text-emerald-800 bg-emerald-100' };
     }
@@ -156,7 +154,7 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
           <Sparkles className="w-12 h-12 text-amber-600 mx-auto" />
           <h2 className="text-xl font-serif font-bold text-stone-900">本页无可蒸馏词汇</h2>
           <p className="text-xs text-stone-600">
-            本页中的所有单词均已进入长时记忆金库，或者无需蒸馏。
+            本页暂无到期的待蒸馏词汇（未到休眠期，或已全部进入长时记忆金库）。
           </p>
           <button
             onClick={onFinish}
@@ -254,7 +252,7 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
                     {currentWord.translations.join('； ')}
                   </div>
                   <p className="text-xs text-stone-500">
-                    若未自然记住，将自动蒸馏誊写至：<strong>{getStageLabel(currentWord.stage).next}</strong>
+                    没记住将自动蒸馏誊写至：<strong>{getStageLabel(currentWord.stage).next}</strong>
                   </p>
                 </div>
               ) : (
@@ -264,40 +262,35 @@ export const DistillSession: React.FC<DistillSessionProps> = ({
                     className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium transition-all shadow-sm"
                   >
                     <Eye className="w-4 h-4 text-stone-500" />
-                    <span>查看中文释义 (或按空格键)</span>
+                    <span>查看中文释义 (空格)</span>
                   </button>
+                  <p className="text-[11px] text-stone-400 mt-3">先在心里回忆意思，再查看释义</p>
                 </div>
               )}
             </div>
 
-            {/* Decision Buttons */}
+            {/* Judgment: only after the meaning has been revealed */}
             <div className="pt-4 border-t border-stone-200/80">
               <div className="grid grid-cols-2 gap-4">
-                {/* Option 1: Need Distillation */}
                 <button
                   onClick={() => handleDecision(false)}
-                  className="p-3.5 rounded-2xl border-2 border-stone-200 hover:border-orange-500 hover:bg-orange-50/50 text-stone-800 transition-all flex flex-col items-center space-y-1 text-center group"
+                  disabled={!isRevealed}
+                  className="p-3.5 rounded-2xl border-2 border-stone-200 hover:border-orange-500 hover:bg-orange-50/50 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:border-stone-200 text-stone-800 transition-all flex flex-col items-center space-y-1 text-center group"
                 >
-                  <span className="text-xs font-bold text-stone-900 group-hover:text-orange-900 flex items-center space-x-1">
-                    <span>✍️ 未记住 / 继续蒸馏</span>
-                  </span>
-                  <span className="text-[10px] text-stone-500">
-                    移入下一级象限 (按键盘 1 / ←)
-                  </span>
+                  <span className="text-xs font-bold text-stone-900 group-hover:text-orange-900">没记住</span>
+                  <span className="text-[10px] text-stone-500">进入下一级象限 (1 / ←)</span>
                 </button>
 
-                {/* Option 2: Retained in Long-term Memory */}
                 <button
                   onClick={() => handleDecision(true)}
-                  className="p-3.5 rounded-2xl border-2 border-emerald-300 bg-emerald-50/40 hover:bg-emerald-100 text-emerald-950 transition-all flex flex-col items-center space-y-1 text-center group"
+                  disabled={!isRevealed}
+                  className="p-3.5 rounded-2xl border-2 border-emerald-300 bg-emerald-50/40 hover:bg-emerald-100 disabled:opacity-40 disabled:hover:bg-emerald-50/40 text-emerald-950 transition-all flex flex-col items-center space-y-1 text-center group"
                 >
                   <span className="text-xs font-bold text-emerald-900 flex items-center space-x-1">
                     <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>自然记住了！</span>
+                    <span>自然记住了</span>
                   </span>
-                  <span className="text-[10px] text-emerald-700">
-                    进入长时记忆金库 (按键盘 2 / →)
-                  </span>
+                  <span className="text-[10px] text-emerald-700">进入长时记忆金库 (2 / →)</span>
                 </button>
               </div>
             </div>
