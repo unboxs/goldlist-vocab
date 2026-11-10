@@ -50,20 +50,6 @@
   background: rgba(180, 160, 130, 0.7);
 }
 
-/* Force landscape on phones: block the UI with a guard while held in portrait */
-.portrait-guard {
-  display: none;
-}
-@media (orientation: portrait) and (max-width: 767px) {
-  .portrait-guard {
-    display: flex;
-  }
-}
-@keyframes tilt {
-  0%, 100% { transform: rotate(-12deg); }
-  50% { transform: rotate(12deg); }
-}
-
 /* Print styling for A4 Goldlist Worksheet */
 @media print {
   body {
