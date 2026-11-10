@@ -122,7 +122,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
         </div>
 
         {/* Page status pill & Action */}
-        <div className="flex items-center space-x-3 w-full md:w-auto justify-end">
+        <div className="flex items-center flex-wrap gap-2 w-full md:w-auto justify-end">
           {nonMastered.length === 0 && pageWords.length > 0 ? (
             <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200">
               <CheckCircle className="w-4 h-4 text-emerald-600" />
@@ -241,7 +241,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
         {/* 4 Quadrants Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-stone-300/80">
           {/* ================= QUADRANT A: TOP LEFT (HEADLIST) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[280px] lg:min-h-[500px]">
             {/* Header of Quadrant A */}
             <div className="flex items-center justify-between border-b-2 border-amber-800/30 pb-3.5">
               <div className="space-y-0.5">
@@ -288,7 +288,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
                           </span>
                           <button
                             onClick={(e) => handlePlayWord(word, e)}
-                            className="text-amber-700/80 hover:text-amber-900 p-1 hover:bg-amber-200/50 rounded-full transition-colors"
+                            className="text-amber-700/80 hover:text-amber-900 p-2 hover:bg-amber-200/50 rounded-full transition-colors"
                             title="播放原声发音"
                           >
                             <Volume2 className="w-4 h-4" />
@@ -301,7 +301,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
                                 e.stopPropagation();
                                 onToggleStar(word.id);
                               }}
-                              className="p-1 hover:bg-amber-100 rounded-full transition-colors"
+                              className="p-2 hover:bg-amber-100 rounded-full transition-colors"
                               title={word.isStarred ? '取消重点生词标记' : '标记为重点生词 (Star)'}
                             >
                               <Star
@@ -404,7 +404,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
           </div>
 
           {/* ================= QUADRANT B: TOP RIGHT (1st DISTILLATION / BRONZE) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[280px] lg:min-h-[500px]">
             {/* Header of Quadrant B */}
             <div className="flex items-center justify-between border-b-2 border-orange-800/30 pb-3.5">
               <div className="space-y-0.5">
@@ -477,7 +477,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
           </div>
 
           {/* ================= QUADRANT D: BOTTOM LEFT (3rd DISTILLATION / GOLD) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[280px] lg:min-h-[500px]">
             {/* Header of Quadrant D */}
             <div className="flex items-center justify-between border-b-2 border-yellow-800/30 pb-3.5">
               <div className="space-y-0.5">
@@ -548,7 +548,7 @@ export const NotebookView: React.FC<NotebookViewProps> = ({
           </div>
 
           {/* ================= QUADRANT C: BOTTOM RIGHT (2nd DISTILLATION / SILVER) ================= */}
-          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[500px]">
+          <div className="p-6 sm:p-8 space-y-4 bg-[#fcfaf5] min-h-[280px] lg:min-h-[500px]">
             {/* Header of Quadrant C */}
             <div className="flex items-center justify-between border-b-2 border-slate-700/30 pb-3.5">
               <div className="space-y-0.5">

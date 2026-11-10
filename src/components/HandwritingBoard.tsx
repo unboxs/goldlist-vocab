@@ -403,7 +403,7 @@ export const HandwritingBoard: React.FC<HandwritingBoardProps> = ({
           <button
             onClick={handleUndo}
             disabled={strokes.length === 0}
-            className="p-2 rounded-xl border border-stone-200 hover:bg-stone-100 disabled:opacity-40 text-stone-700 transition-colors"
+            className="p-2.5 rounded-xl border border-stone-200 hover:bg-stone-100 disabled:opacity-40 text-stone-700 transition-colors"
             title="撤销上一步 (Ctrl+Z)"
           >
             <RotateCcw className="w-4 h-4" />
@@ -508,7 +508,7 @@ export const HandwritingBoard: React.FC<HandwritingBoardProps> = ({
               <button
                 key={c.color}
                 onClick={() => setPenColor(c.color)}
-                className={`w-6 h-6 rounded-lg transition-transform ${
+                className={`w-8 h-8 rounded-lg transition-transform ${
                   penColor === c.color ? 'scale-110 ring-2 ring-amber-500 shadow-sm' : 'opacity-70 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: c.color }}
@@ -537,7 +537,7 @@ export const HandwritingBoard: React.FC<HandwritingBoardProps> = ({
       {/* Main Canvas Canvas Frame (100% precise cursor alignment, zero offset) */}
       <div
         ref={containerRef}
-        className="relative rounded-3xl border-2 border-[#d6cbba] bg-[#fcfbf7] shadow-notebook-lg overflow-hidden h-[340px] sm:h-[400px] select-none touch-none"
+        className="relative rounded-3xl border-2 border-[#d6cbba] bg-[#fcfbf7] shadow-notebook-lg overflow-hidden h-[220px] sm:h-[280px] lg:h-[400px] select-none touch-none"
       >
         {/* Background Guidelines */}
         {guideStyle === 'four-line' && (
