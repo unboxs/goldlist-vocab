@@ -11,7 +11,7 @@ interface WordVaultProps {
 
 export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage, onToggleStar }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [stageFilter, setStageFilter] = useState<DistillationStage | 'all' | 'starred'>('all');
+  const [stageFilter, setStageFilter] = useState<DistillationStage | 'all' | 'starred' | 'stubborn'>('all');
   const [visibleCount, setVisibleCount] = useState(50);
 
   // Filtered list
@@ -19,6 +19,8 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage, onToggl
     let result = words;
     if (stageFilter === 'starred') {
       result = result.filter((w) => w.isStarred);
+    } else if (stageFilter === 'stubborn') {
+      result = result.filter((w) => w.isStubborn);
     } else if (stageFilter !== 'all') {
       result = result.filter((w) => w.stage === stageFilter);
     }
@@ -95,6 +97,7 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage, onToggl
               { id: 'all', label: '全部' },
               { id: 'starred', label: '⭐ 重点生词' },
               { id: 'mastered', label: '💎 永久金库' },
+              { id: 'stubborn', label: '🪨 顽固词' },
               { id: 'headlist', label: '📜 原始' },
               { id: 'd1', label: '🥉 铜级' },
               { id: 'd2', label: '🥈 银级' },
@@ -103,7 +106,7 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage, onToggl
               <button
                 key={f.id}
                 onClick={() => {
-                  setStageFilter(f.id as DistillationStage | 'all' | 'starred');
+                  setStageFilter(f.id as DistillationStage | 'all' | 'starred' | 'stubborn');
                   setVisibleCount(50);
                 }}
                 className={`px-3 py-2 rounded-xl whitespace-nowrap transition-all ${
@@ -172,7 +175,11 @@ export const WordVault: React.FC<WordVaultProps> = ({ words, onGoToPage, onToggl
               </div>
 
               <div className="flex-shrink-0">
-                {getStageBadge(word.stage)}
+                {word.isStubborn ? (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-stone-300 text-stone-800">顽固词</span>
+                ) : (
+                  getStageBadge(word.stage)
+                )}
               </div>
             </div>
 
