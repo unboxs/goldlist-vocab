@@ -1,0 +1,21 @@
+{
+  "name": "GoldList 黄金手账 · 词汇长时记忆系统",
+  "short_name": "GoldList",
+  "description": "基于 David James 黄金列表法（Gold List Method）的英语词汇四象限长时记忆手账",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#f5f2eb",
+  "theme_color": "#b45309",
+  "lang": "zh-CN",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

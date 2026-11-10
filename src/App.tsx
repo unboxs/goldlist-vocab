@@ -8,6 +8,7 @@ import { ContinuousPlayer } from './components/ContinuousPlayer';
 import { DistillSession } from './components/DistillSession';
 import { GoldListGuideModal } from './components/GoldListGuideModal';
 import { SettingsModal } from './components/SettingsModal';
+import { PortraitGuard } from './components/PortraitGuard';
 import { db, DEFAULT_SETTINGS } from './services/db';
 import { WordItem, GoldListPage, AppSettings, AppStats } from './types/goldlist';
 import { Sparkles, Loader2 } from 'lucide-react';
@@ -174,6 +175,8 @@ export const App: React.FC = () => {
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
       theme === 'midnight' ? 'bg-[#151210] text-stone-100' : 'bg-[#f5f2eb] text-stone-900'
     }`}>
+      <PortraitGuard />
+
       {/* Top Navigation */}
       <Navbar
         currentTab={currentTab}

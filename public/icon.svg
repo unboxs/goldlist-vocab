@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="50%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="paper" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7" />
+      <stop offset="100%" stop-color="#f5efe0" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded box -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+
+  <!-- A4 Notebook Icon -->
+  <g filter="url(#shadow)" transform="translate(64, 56)">
+    <!-- Cover -->
+    <rect x="0" y="0" width="384" height="400" rx="24" fill="#2c2824" />
+    <!-- Pages inside -->
+    <rect x="16" y="16" width="352" height="368" rx="16" fill="url(#paper)" />
+    <!-- Spine divider -->
+    <line x1="192" y1="16" x2="192" y2="384" stroke="#d5cbba" stroke-width="3" stroke-dasharray="6 4" />
+    <line x1="16" y1="200" x2="368" y2="200" stroke="#d5cbba" stroke-width="3" stroke-dasharray="6 4" />
+    
+    <!-- Quadrant Accents -->
+    <circle cx="104" cy="108" r="32" fill="#d97706" fill-opacity="0.2" />
+    <text x="104" y="118" font-family="serif" font-size="28" font-weight="bold" fill="#b45309" text-anchor="middle">A</text>
+
+    <circle cx="280" cy="108" r="32" fill="#cd7f32" fill-opacity="0.2" />
+    <text x="280" y="118" font-family="serif" font-size="28" font-weight="bold" fill="#cd7f32" text-anchor="middle">B</text>
+
+    <circle cx="104" cy="292" r="32" fill="#eab308" fill-opacity="0.2" />
+    <text x="104" y="302" font-family="serif" font-size="28" font-weight="bold" fill="#a16207" text-anchor="middle">D</text>
+
+    <circle cx="280" cy="292" r="32" fill="#64748b" fill-opacity="0.2" />
+    <text x="280" y="302" font-family="serif" font-size="28" font-weight="bold" fill="#475569" text-anchor="middle">C</text>
+  </g>
+</svg>
